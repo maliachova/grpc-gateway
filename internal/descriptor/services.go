@@ -256,8 +256,7 @@ func (r *Registry) newParam(meth *Method, path string) (Parameter, error) {
 		return Parameter{}, fmt.Errorf("invalid field access list for %s", path)
 	}
 	target := fields[l-1].Target
-	switch target.GetType() {
-	case descriptorpb.FieldDescriptorProto_TYPE_MESSAGE, descriptorpb.FieldDescriptorProto_TYPE_GROUP:
+	if target.GetType() == descriptorpb.FieldDescriptorProto_TYPE_MESSAGE || target.GetType() == descriptorpb.FieldDescriptorProto_TYPE_GROUP {
 		if grpclog.V(2) {
 			grpclog.Infoln("found aggregate type:", target, target.TypeName)
 		}
@@ -293,8 +292,7 @@ func (r *Registry) newBody(meth *Method, path string) (*Body, error) {
 
 func (r *Registry) newResponse(meth *Method, path string) (*Body, error) {
 	msg := meth.ResponseType
-	switch path {
-	case "", "*":
+	if path == "" || path == "*" {
 		return nil, nil
 	}
 	fields, err := r.resolveFieldPath(msg, path, false)

@@ -966,11 +966,12 @@ func isVisible(r *visibility.VisibilityRule, reg *descriptor.Registry) bool {
 		return true
 	}
 
-	restrictions := strings.Split(strings.TrimSpace(r.Restriction), ",")
+	trimmed := strings.TrimSpace(r.Restriction)
 	// No restrictions results in the element always being visible
-	if len(restrictions) == 0 {
+	if trimmed == "" {
 		return true
 	}
+	restrictions := strings.Split(trimmed, ",")
 
 	for _, restriction := range restrictions {
 		if reg.GetVisibilityRestrictionSelectors()[strings.TrimSpace(restriction)] {
@@ -2996,13 +2997,13 @@ func updateOpenAPIDataFromComments(reg *descriptor.Registry, swaggerObject inter
 	if summaryValue.CanSet() {
 		summary := strings.TrimSpace(paragraphs[0])
 		description := strings.TrimSpace(strings.Join(paragraphs[1:], paragraphDeliminator))
-		if !usingTitle || (len(summary) > 0 && summary[len(summary)-1] != '.') {
+		if !usingTitle || (summary != "" && summary[len(summary)-1] != '.') {
 			// overrides the schema value only if it's empty
 			// keep the comment precedence when updating the package definition
 			if summaryValue.Len() == 0 || isPackageObject {
 				summaryValue.Set(reflect.ValueOf(summary))
 			}
-			if len(description) > 0 {
+			if description != "" {
 				if !descriptionValue.CanSet() {
 					return errors.New("encountered object type with a summary, but no description")
 				}
@@ -3162,10 +3163,7 @@ func isProtoPathMatches(paths []int32, outerPaths []int32, typeName string, type
 	if typeName == "Package" && typeIndex == packageProtoPath {
 		// path for package comments is just [2], and all the other processing
 		// is too complex for it.
-		if len(paths) == 0 || typeIndex != paths[0] {
-			return false
-		}
-		return true
+		return len(paths) > 0 && typeIndex == paths[0]
 	}
 
 	if len(paths) != len(outerPaths)*2+2+len(fieldPaths) {

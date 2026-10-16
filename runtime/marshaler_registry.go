@@ -100,10 +100,13 @@ func makeMarshalerMIMERegistry() marshalerRegistry {
 
 // WithMarshalerOption returns a ServeMuxOption which associates inbound and outbound
 // Marshalers to a MIME type in mux.
+//
+// If mime is invalid, the marshaler is not registered and the error is logged;
+// the option does not panic so a bad configuration cannot crash mux construction.
 func WithMarshalerOption(mime string, marshaler Marshaler) ServeMuxOption {
 	return func(mux *ServeMux) {
 		if err := mux.marshalers.add(mime, marshaler); err != nil {
-			panic(err)
+			grpclog.Errorf("failed to register marshaler for MIME type %q: %v; marshaler not registered", mime, err)
 		}
 	}
 }

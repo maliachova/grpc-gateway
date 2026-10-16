@@ -999,7 +999,7 @@ func TestServeHTTP_WithDisableHTTPMethodOverride(t *testing.T) {
 		t.Fatalf("runtime.NewPattern failed: %v", err)
 	}
 	mux.Handle("GET", pat, func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-		_, _ = fmt.Fprintf(w, "GET /foo")
+		_, _ = fmt.Fprint(w, "GET /foo")
 	})
 
 	postPat, err := runtime.NewPattern(1, []int{int(utilities.OpLitPush), 0}, []string{"foo"}, "")
@@ -1007,7 +1007,7 @@ func TestServeHTTP_WithDisableHTTPMethodOverride(t *testing.T) {
 		t.Fatalf("runtime.NewPattern failed: %v", err)
 	}
 	mux.Handle("POST", postPat, func(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-		_, _ = fmt.Fprintf(w, "POST /foo")
+		_, _ = fmt.Fprint(w, "POST /foo")
 	})
 
 	r := httptest.NewRequest("POST", "https://host.example/foo", bytes.NewReader(nil))

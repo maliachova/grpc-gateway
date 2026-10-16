@@ -150,8 +150,7 @@ func annotateContext(ctx context.Context, mux *ServeMux, req *http.Request, rpcM
 	var pairs []string
 	for key, vals := range req.Header {
 		key = textproto.CanonicalMIMEHeaderKey(key)
-		switch key {
-		case xForwardedFor, xForwardedHost:
+		if key == xForwardedFor || key == xForwardedHost {
 			// Handled separately below
 			continue
 		}

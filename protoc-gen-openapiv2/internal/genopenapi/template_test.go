@@ -14176,7 +14176,7 @@ func TestFieldCommentsWithNewlines(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var title, desc string
 			comments := tt.comments
-			if len(comments) > 0 {
+			if comments != "" {
 				paragraphs := strings.Split(comments, paragraphDeliminator)
 				firstParagraph := strings.TrimSpace(paragraphs[0])
 				if !strings.Contains(firstParagraph, "\n") {

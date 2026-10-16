@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -153,7 +154,7 @@ func main() {
 	}
 
 	if *useGoTemplate && *ignoreComments {
-		emitError(fmt.Errorf("`ignore_comments` and `use_go_templates` are mutually exclusive and cannot be enabled at the same time"))
+		emitError(errors.New("`ignore_comments` and `use_go_templates` are mutually exclusive and cannot be enabled at the same time"))
 		return
 	}
 	reg.SetUseGoTemplate(*useGoTemplate)
@@ -161,7 +162,7 @@ func main() {
 	reg.SetRemoveInternalComments(*removeInternalComments)
 
 	if len(*goTemplateArgs) > 0 && !*useGoTemplate {
-		emitError(fmt.Errorf("`go_template_args` requires `use_go_templates` to be enabled"))
+		emitError(errors.New("`go_template_args` requires `use_go_templates` to be enabled"))
 		return
 	}
 	reg.SetGoTemplateArgs(*goTemplateArgs)

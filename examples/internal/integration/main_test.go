@@ -35,6 +35,8 @@ func runGateway(ctx context.Context, addr string, opts ...gwruntime.ServeMuxOpti
 
 func waitForGateway(ctx context.Context, port uint16) error {
 	ch := time.After(10 * time.Second)
+	ticker := time.NewTicker(10 * time.Millisecond)
+	defer ticker.Stop()
 
 	for {
 		r, err := http.Get(fmt.Sprintf("http://localhost:%d/healthz", port))
@@ -51,7 +53,7 @@ func waitForGateway(ctx context.Context, port uint16) error {
 			return err
 		case <-ch:
 			return err
-		case <-time.After(10 * time.Millisecond):
+		case <-ticker.C:
 		}
 	}
 }

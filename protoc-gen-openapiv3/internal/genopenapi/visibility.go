@@ -20,10 +20,11 @@ func isVisible(r *visibility.VisibilityRule, reg *descriptor.Registry) bool {
 
 	selectors := reg.GetVisibilityRestrictionSelectors()
 
-	restrictions := strings.Split(strings.TrimSpace(r.Restriction), ",")
-	if len(restrictions) == 0 {
+	trimmed := strings.TrimSpace(r.Restriction)
+	if trimmed == "" {
 		return true
 	}
+	restrictions := strings.Split(trimmed, ",")
 
 	for _, restriction := range restrictions {
 		if selectors[strings.TrimSpace(restriction)] {

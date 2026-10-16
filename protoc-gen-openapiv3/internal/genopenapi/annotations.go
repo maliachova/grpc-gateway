@@ -1,6 +1,7 @@
 package genopenapi
 
 import (
+	"errors"
 	"fmt"
 	"maps"
 	"slices"
@@ -143,7 +144,7 @@ func applyDocumentOverride(doc *Document, d *options.Document) error {
 		}
 		if l := info.GetLicense(); l != nil {
 			if l.GetName() == "" {
-				return fmt.Errorf("openapiv3 license: name is required")
+				return errors.New("openapiv3 license: name is required")
 			}
 			doc.Info.License = &License{
 				Name:       l.GetName(),
@@ -237,7 +238,7 @@ func convertSecurityScheme(s *options.SecurityScheme) (*SecurityScheme, error) {
 	case options.SecurityScheme_TYPE_API_KEY:
 		out.Type = "apiKey"
 		if s.GetName() == "" {
-			return nil, fmt.Errorf("name is required for apiKey security schemes")
+			return nil, errors.New("name is required for apiKey security schemes")
 		}
 		out.Name = s.GetName()
 		// See: https://spec.openapis.org/oas/v3.1.0#securitySchemeIn
@@ -249,12 +250,12 @@ func convertSecurityScheme(s *options.SecurityScheme) (*SecurityScheme, error) {
 		case options.SecurityScheme_IN_COOKIE:
 			out.In = "cookie"
 		default:
-			return nil, fmt.Errorf("in is required for apiKey security schemes")
+			return nil, errors.New("in is required for apiKey security schemes")
 		}
 	case options.SecurityScheme_TYPE_HTTP:
 		out.Type = "http"
 		if s.GetScheme() == "" {
-			return nil, fmt.Errorf("scheme is required for http security schemes")
+			return nil, errors.New("scheme is required for http security schemes")
 		}
 		out.Scheme = s.GetScheme()
 		out.BearerFormat = s.GetBearerFormat()
@@ -270,11 +271,11 @@ func convertSecurityScheme(s *options.SecurityScheme) (*SecurityScheme, error) {
 	case options.SecurityScheme_TYPE_OPEN_ID_CONNECT:
 		out.Type = "openIdConnect"
 		if s.GetOpenIdConnectUrl() == "" {
-			return nil, fmt.Errorf("open_id_connect_url is required for openIdConnect security schemes")
+			return nil, errors.New("open_id_connect_url is required for openIdConnect security schemes")
 		}
 		out.OpenIDConnectURL = s.GetOpenIdConnectUrl()
 	default:
-		return nil, fmt.Errorf("type is required")
+		return nil, errors.New("type is required")
 	}
 	return out, nil
 }
@@ -286,7 +287,7 @@ func convertSecurityScheme(s *options.SecurityScheme) (*SecurityScheme, error) {
 // Spec: https://spec.openapis.org/oas/v3.1.0#oauth-flows-object
 func convertOAuthFlows(f *options.OAuthFlows) (*OAuthFlows, error) {
 	if f == nil {
-		return nil, fmt.Errorf("flows is required for oauth2 security schemes")
+		return nil, errors.New("flows is required for oauth2 security schemes")
 	}
 	var (
 		out OAuthFlows
@@ -370,7 +371,7 @@ func checkSecurityRequirements(reqs []SecurityRequirement, schemes map[string]*S
 // useful in proto.
 func validateServer(s *options.Server) error {
 	if s.GetUrl() == "" {
-		return fmt.Errorf("server: url is required")
+		return errors.New("server: url is required")
 	}
 	return nil
 }
@@ -379,7 +380,7 @@ func validateServer(s *options.Server) error {
 // Object's required `url` field.
 func validateExternalDocs(ed *options.ExternalDocs) error {
 	if ed.GetUrl() == "" {
-		return fmt.Errorf("external_docs: url is required")
+		return errors.New("external_docs: url is required")
 	}
 	return nil
 }

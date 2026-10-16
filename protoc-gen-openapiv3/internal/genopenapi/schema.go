@@ -372,8 +372,7 @@ func needsAllOfWrap(field *descriptor.Field) bool {
 		return true
 	}
 	for _, fb := range fieldBehaviors(field) {
-		switch fb {
-		case annotations.FieldBehavior_OUTPUT_ONLY, annotations.FieldBehavior_INPUT_ONLY:
+		if fb == annotations.FieldBehavior_OUTPUT_ONLY || fb == annotations.FieldBehavior_INPUT_ONLY {
 			return true
 		}
 	}

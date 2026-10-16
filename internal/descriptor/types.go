@@ -349,10 +349,7 @@ func (p FieldPath) String() string {
 
 // IsNestedProto3 indicates whether the FieldPath is a nested Proto3 path.
 func (p FieldPath) IsNestedProto3() bool {
-	if len(p) > 1 && !p[0].Target.Message.File.proto2() {
-		return true
-	}
-	return false
+	return len(p) > 1 && !p[0].Target.Message.File.proto2()
 }
 
 // IsOptionalProto3 indicates whether the FieldPath is a proto3 optional field.

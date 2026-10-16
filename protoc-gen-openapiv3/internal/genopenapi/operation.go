@@ -175,7 +175,7 @@ func (b *schemaBuilder) queryParameters(field *descriptor.Field, prefix string, 
 					name, cycle.limit)
 				return nil
 			}
-			defer cycle.leave(msg.FQMN())
+			defer func() { cycle.leave(msg.FQMN()) }()
 			var out []*ParameterRef
 			for _, nested := range msg.Fields {
 				if !isVisible(fieldVisibility(nested), b.reg) {
@@ -430,11 +430,7 @@ func operationID(svc *descriptor.Service, m *descriptor.Method, bindingIdx int) 
 }
 
 func needsRequestBody(method string) bool {
-	switch method {
-	case "POST", "PUT", "PATCH":
-		return true
-	}
-	return false
+	return method == "POST" || method == "PUT" || method == "PATCH"
 }
 
 func isPathParam(field *descriptor.Field, params []descriptor.Parameter) bool {
