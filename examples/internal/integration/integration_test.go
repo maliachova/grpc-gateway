@@ -982,6 +982,7 @@ func TestABEPatch(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to issue PATCH request: %v", err)
 	}
+	defer patchResp.Body.Close()
 	if got, want := patchResp.StatusCode, http.StatusOK; got != want {
 		if body, err := io.ReadAll(patchResp.Body); err != nil {
 			t.Errorf("patchResp body couldn't be read: %v", err)
@@ -1115,6 +1116,7 @@ func TestABEPatchBody(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to issue PATCH request: %v", err)
 			}
+			defer patchResp.Body.Close()
 			if got, want := patchResp.StatusCode, http.StatusOK; got != want {
 				if body, err := io.ReadAll(patchResp.Body); err != nil {
 					t.Errorf("patchResp body couldn't be read: %v", err)
@@ -1151,6 +1153,7 @@ func postABE(t *testing.T, port int, abe *examplepb.ABitOfEverything) (uuid stri
 		t.Fatalf("http.Post(%q) failed with %v; want success", apiURL, err)
 		return
 	}
+	defer postResp.Body.Close()
 	body, err := io.ReadAll(postResp.Body)
 	if err != nil {
 		t.Fatalf("postResp body couldn't be read: %v", err)
@@ -1701,6 +1704,7 @@ func TestPostWithEmptyBody(t *testing.T) {
 		t.Errorf("http.Post(%q) failed with %v; want success", apiURL, err)
 		return
 	}
+	defer rep.Body.Close()
 
 	if rep.StatusCode != http.StatusOK {
 		t.Errorf("http.Post(%q) response code is %d; want %d", apiURL,
@@ -2457,6 +2461,7 @@ func testNonStandardNames(t *testing.T, port int, method string, jsonBody string
 	if err != nil {
 		t.Fatalf("failed to issue PATCH request: %v", err)
 	}
+	defer patchResp.Body.Close()
 
 	body, err := io.ReadAll(patchResp.Body)
 	if err != nil {

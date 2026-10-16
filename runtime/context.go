@@ -212,6 +212,9 @@ func annotateContext(ctx context.Context, mux *ServeMux, req *http.Request, rpcM
 	}
 
 	if timeout != 0 {
+		// The cancel function is intentionally not retained: the parent is the
+		// request context, which is canceled once the handler returns. That
+		// cancellation stops the timeout timer and releases its resources.
 		ctx, _ = context.WithTimeout(ctx, timeout)
 	}
 	md := metadata.Pairs(pairs...)

@@ -38,8 +38,11 @@ func waitForGateway(ctx context.Context, port uint16) error {
 
 	for {
 		r, err := http.Get(fmt.Sprintf("http://localhost:%d/healthz", port))
-		if err == nil && r.StatusCode == http.StatusOK {
-			return nil
+		if err == nil {
+			r.Body.Close()
+			if r.StatusCode == http.StatusOK {
+				return nil
+			}
 		}
 
 		grpclog.Infof("Waiting for localhost:%d to get ready", port)

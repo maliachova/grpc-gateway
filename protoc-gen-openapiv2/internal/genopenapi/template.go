@@ -1741,7 +1741,12 @@ func renderServices(services []*descriptor.Service, paths *openapiPathsObject, r
 						pathParamName := fc.GetPathParamName()
 						if pathParamName != "" && pathParamName != parameterString {
 							pathParamNames["{"+parameterString+"}"] = "{" + pathParamName + "}"
-							parameterString, _, _ = strings.Cut(pathParamName, "=")
+							name, _, found := strings.Cut(pathParamName, "=")
+							if found {
+								parameterString = name
+							} else {
+								parameterString = pathParamName
+							}
 						}
 					}
 
@@ -1951,7 +1956,11 @@ func renderServices(services []*descriptor.Service, paths *openapiPathsObject, r
 								}
 							}
 							// update the pathItemObject we are adding to with the new path
-							pathItemObject, _ = getPathItemObject(*paths, newPath)
+							if item, exists := getPathItemObject(*paths, newPath); exists {
+								pathItemObject = item
+							} else {
+								pathItemObject = openapiPathItemObject{}
+							}
 							firstPathParameter.Name = newPathElement
 							path = newPath
 							parameters[firstParamIndex] = *firstPathParameter
@@ -1998,7 +2007,10 @@ func renderServices(services []*descriptor.Service, paths *openapiPathsObject, r
 				if meth.GetServerStreaming() {
 					desc += "(streaming responses)"
 					responseSchema.Type = "object"
-					swgRef, _ := fullyQualifiedNameToOpenAPIName(meth.ResponseType.FQMN(), reg)
+					swgRef, found := fullyQualifiedNameToOpenAPIName(meth.ResponseType.FQMN(), reg)
+					if !found {
+						swgRef = meth.ResponseType.FQMN()
+					}
 					responseSchema.Title = "Stream result of " + swgRef
 
 					props := openapiSchemaObjectProperties{

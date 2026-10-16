@@ -347,7 +347,9 @@ func WithHealthEndpointAt(healthCheckClient grpc_health_v1.HealthClient, endpoin
 					return
 				}
 
-				_ = outboundMarshaler.NewEncoder(w).Encode(resp)
+				if err := outboundMarshaler.NewEncoder(w).Encode(resp); err != nil {
+					grpclog.Errorf("failed to encode health check response: %v", err)
+				}
 			})
 	}
 }
